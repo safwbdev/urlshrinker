@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <title>URL Shrinker</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h3>URL SHRINKER</h3>
+            <div class="col s12">
+                <!-- <input type="url" id="urlinput" /> -->
+                <div class="input-field">
+                    <input placeholder="https://www.example.com" id="urlinput" type="text" class="validate">
+                    <label for="first_name">Your URL</label>
+                  </div>
+                <button onclick="shorturl()" class="waves-effect waves-light btn">Shrink URL</button>
+
+            </div>
+            <div class="col s12 shortlink"></div>
+        </div>
+
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+
+var endpoint = "https://www.jsonstore.io/298661374cb33c46551985b798a30d84d0d8914b2a1e5478a238a27edb57a79a";
+
+function getUrl(){
+    var url = document.getElementById("urlinput").value;
+
+    var protocol_ok = url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://");
+
+    if(!protocol_ok){
+        newurl = "http://"+url;
+        return newurl;
+        }else{
+            return url;
+        }
+}
+
+function randomize() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}
+
+function generateHash(){
+    if (window.location.hash == ""){
+        window.location.hash = randomize();
+    }
+}
+
+function sendRequest(url) {
+    this.url = url;
+    $.ajax({
+        'url': endpoint + "/" + window.location.hash.substr(1),
+        'type': 'POST',
+        'data': JSON.stringify(this.url),
+        'dataType': 'json',
+        'contentType': 'application/json; charset=utf-8'
+})
+}
+
+function shorturl(){
+    var longurl = getUrl();
+    generateHash();
+    sendRequest(longurl);
+    console.log(window.location.href + "#" )
+}
+
+var hashh = window.location.hash.substr(1)
+
+if (window.location.hash != "") {
+    $.getJSON(endpoint + "/" + hashh, function (data) {
+        data = data["result"];
+
+        if (data != null) {
+            window.location.href = data;
+        }
+
+    });
+}
+</script>
+</html>
