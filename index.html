@@ -4,21 +4,41 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <title>URL SHRINKER</title>
+        <style>
+            h3.title{
+                text-align: center;
+            }
+            .shrink-form, .shrink-form input{
+                text-align: center;
+            }
+            .copy-link{
+                display: flex;
+            }
+            .copy-link input{ 
+                text-align: center;
+            }
+            .ori-url{
+                text-align:center;
+            }
+            .shortlink{
+                margin-top: 80px;
+            }
+        </style>
     </head>
     <body>
         <div class="container">
             <div class="row">
-                <h3>URL SHRINKER</h3>
-                <div class="col s12">
+                <h3 class="title">URL SHRINKER</h3>
+                <div class="col s12 shrink-form">
                     <div class="input-field">
                         <input placeholder="https://www.example.com" id="urlinput" type="text" class="validate">
-                        <label for="first_name">Your URL</label>
                     </div>
                     <button onclick="shorturl()" class="waves-effect waves-light btn">Shrink URL</button>
                 </div>
             </div>
-            <div class="row" id="shortlink"></div>
+            <div class="row shortlink" id="shortlink"></div>
         </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -76,14 +96,15 @@
             var newLink = window.location.origin + "/#" + window.location.hash.substr(1);
 
             $("#shortlink")
-            .append(`<div class="col s5">
-                        <input type="text" value="${newLink}"/>
+            .html(`<div class="col s12">
+                        <div class="copy-link">
+                            <input type="text" value="${newLink}" id="shrunkurl" onclick="copyUrl()" readonly/>
+                            <button onclick="copyUrl()" class="waves-effect waves-light btn" alt="copy to clipboard"><i class="material-icons">content_copy</i></button>&nbsp;
+                            <a class="waves-effect waves-light btn" target="_blank" href="${newLink}" alt="preview"><i class="material-icons">open_in_new</i></a>
+                        </div>
                     </div>
-                    <div class="col s2">
-                        <a class="waves-effect waves-light btn" target="_blank" href="${newLink}">Preview</a>
-                    </div>
-                    <div class="col s5">
-                        <p>Original URL : ${longurl}</p>
+                    <div class="col s12 ori-url">
+                        <h5>Original URL : <a href="${longurl}" target="_blank">${longurl}</a></h5>
                     </div>
             `);
             $('#urlinput').val('')
@@ -101,5 +122,13 @@
 
             });
         }
+
+        function copyUrl() {
+            var copiedUrl = document.getElementById("shrunkurl");
+            copiedUrl.select();
+            copiedUrl.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("URL Copied to clipboard");
+}
     </script>
 </html>
