@@ -1,6 +1,12 @@
 h3.title{
     text-align: center;
 }
+body{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .shrink-form, .shrink-form input{
     text-align: center;
 }
@@ -15,4 +21,27 @@ h3.title{
 }
 .shortlink{
     margin-top: 80px;
+}
+
+.tooltip {
+    position: relative;
+    display: flex;
+}
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    font-size: 12px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+    position: absolute;
+    z-index: 1;
+}
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }

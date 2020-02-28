@@ -1,28 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-        <link rel="stylesheet" href="style.css">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <title>URL SHRINKER</title>
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <h3 class="title">URL SHRINKER</h3>
-                <div class="col s12 shrink-form">
-                    <div class="input-field">
-                        <input placeholder="https://www.example.com" id="urlinput" type="text" class="validate">
-                    </div>
-                    <button onclick="shorturl()" class="waves-effect waves-light btn">Shrink URL</button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>URL Shrinker</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h3 class="title">URL SHRINKER</h3>
+            <div class="col s12 shrink-form">
+                <div class="input-field">
+                    <input placeholder="https://www.example.com" id="urlinput" type="text" class="validate">
                 </div>
+                <button onclick="shorturl()" class="waves-effect waves-light btn">Shrink URL</button>
             </div>
-            <div class="row shortlink" id="shortlink"></div>
         </div>
-    </body>
-    <script src="shrinkurl.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <div class="row shortlink" id="shortlink"></div>
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+
+    var endpoint = "https://www.jsonstore.io/298661374cb33c46551985b798a30d84d0d8914b2a1e5478a238a27edb57a79a";
+
+    function shorturl(){
+
+        var url = document.getElementById("urlinput").value;
+
+        if(url){            
+
+            var longurl = validateUrl(url);
+
+            generateHash();
+
+            sendRequest(longurl);
+
+            var newLink = window.location.origin + "/#" + window.location.hash.substr(1);
+
+            $("#shortlink")
+            .html(`<div class="col s12">
+                        <div class="copy-link">
+                            <input type="text" value="${newLink}" id="shrunkurl" onclick="copyUrl()" readonly/>
+                            <div class="tooltip">
+                                <button onclick="copyUrl()" class="waves-effect waves-light btn" alt="copy to clipboard">
+                                    <i class="material-icons">content_copy</i>
+                                </button>
+                                <span class="tooltiptext">Copy to Clipboard</span>
+                            </div>
+                            &nbsp;
+                            <div class="tooltip">
+                                <a class="waves-effect waves-light btn" target="_blank" href="${newLink}" alt="preview">
+                                    <i class="material-icons">open_in_new</i>
+                                </a>
+                                <span class="tooltiptext">Preview</span>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col s12 ori-url">
+                        <h5>Original URL : <a href="${longurl}" target="_blank">${longurl}</a></h5>
+                    </div>
+            `);
+            $('#urlinput').val('');
+
+        } else {
+            alert(`Don't leave the field blank`);
+        }
+    }
+
+    function validateUrl(url){
+
+        var protocol_ok = url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://");
+
+        if(!protocol_ok){
+            newurl = "http://"+url;
+            return newurl;
+        }else{
+            return url;
+        }
+    }
+
+    function randomize() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    }
+
+    function generateHash(){
+        if (window.location.hash == ""){
+            window.location.hash = randomize();
+        }
+    }
+
+    function sendRequest(url) {
+        this.url = url;
+        $.ajax({
+            'url': endpoint + "/" + window.location.hash.substr(1),
+            'type': 'POST',
+            'data': JSON.stringify(this.url),
+            'dataType': 'json',
+            'contentType': 'application/json; charset=utf-8'
+        })
+    }
+
+
+    var hashh = window.location.hash.substr(1)
+
+    if (window.location.hash != "") {
+        $.getJSON(endpoint + "/" + hashh, function (data) {
+            data = data["result"];
+
+            if (data != null) {
+                window.location.href = data;
+            }
+
+        });
+    }
+
+    function copyUrl() {
+        var copiedUrl = document.getElementById("shrunkurl");
+        copiedUrl.select();
+        copiedUrl.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        alert("URL Copied to clipboard");
+    }
+</script>
 </html>
