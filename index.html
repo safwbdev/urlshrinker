@@ -4,28 +4,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link rel="stylesheet" href="style.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <title>URL SHRINKER</title>
-        <style>
-            h3.title{
-                text-align: center;
-            }
-            .shrink-form, .shrink-form input{
-                text-align: center;
-            }
-            .copy-link{
-                display: flex;
-            }
-            .copy-link input{ 
-                text-align: center;
-            }
-            .ori-url{
-                text-align:center;
-            }
-            .shortlink{
-                margin-top: 80px;
-            }
-        </style>
     </head>
     <body>
         <div class="container">
@@ -41,94 +22,7 @@
             <div class="row shortlink" id="shortlink"></div>
         </div>
     </body>
+    <script src="shrinkurl.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-
-        var endpoint = "https://www.jsonstore.io/298661374cb33c46551985b798a30d84d0d8914b2a1e5478a238a27edb57a79a";
-
-        function getUrl(){
-            var url = document.getElementById("urlinput").value;
-
-            var protocol_ok = url.startsWith("http://") || url.startsWith("https://") || url.startsWith("ftp://");
-
-            if(!protocol_ok){
-                newurl = "http://"+url;
-                return newurl;
-                }else{
-                    return url;
-                }
-        }
-
-        function randomize() {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-            for (var i = 0; i < 5; i++)
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-            return text;
-        }
-
-        function generateHash(){
-            if (window.location.hash == ""){
-                window.location.hash = randomize();
-            }
-        }
-
-        function sendRequest(url) {
-            this.url = url;
-            $.ajax({
-                'url': endpoint + "/" + window.location.hash.substr(1),
-                'type': 'POST',
-                'data': JSON.stringify(this.url),
-                'dataType': 'json',
-                'contentType': 'application/json; charset=utf-8'
-            })
-        }
-
-        function shorturl(){
-            var longurl = getUrl();
-            
-            generateHash();
-            
-            sendRequest(longurl);
-
-            var newLink = window.location.origin + "/#" + window.location.hash.substr(1);
-
-            $("#shortlink")
-            .html(`<div class="col s12">
-                        <div class="copy-link">
-                            <input type="text" value="${newLink}" id="shrunkurl" onclick="copyUrl()" readonly/>
-                            <button onclick="copyUrl()" class="waves-effect waves-light btn" alt="copy to clipboard"><i class="material-icons">content_copy</i></button>&nbsp;
-                            <a class="waves-effect waves-light btn" target="_blank" href="${newLink}" alt="preview"><i class="material-icons">open_in_new</i></a>
-                        </div>
-                    </div>
-                    <div class="col s12 ori-url">
-                        <h5>Original URL : <a href="${longurl}" target="_blank">${longurl}</a></h5>
-                    </div>
-            `);
-            $('#urlinput').val('')
-        }
-
-        var hashh = window.location.hash.substr(1)
-
-        if (window.location.hash != "") {
-            $.getJSON(endpoint + "/" + hashh, function (data) {
-                data = data["result"];
-
-                if (data != null) {
-                    window.location.href = data;
-                }
-
-            });
-        }
-
-        function copyUrl() {
-            var copiedUrl = document.getElementById("shrunkurl");
-            copiedUrl.select();
-            copiedUrl.setSelectionRange(0, 99999);
-            document.execCommand("copy");
-            alert("URL Copied to clipboard");
-}
-    </script>
 </html>

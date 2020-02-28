@@ -1,0 +1,18 @@
+h3.title{
+    text-align: center;
+}
+.shrink-form, .shrink-form input{
+    text-align: center;
+}
+.copy-link{
+    display: flex;
+}
+.copy-link input{ 
+    text-align: center;
+}
+.ori-url{
+    text-align:center;
+}
+.shortlink{
+    margin-top: 80px;
+}
